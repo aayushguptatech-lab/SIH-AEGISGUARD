@@ -1,15 +1,15 @@
-export default function KeyboardMonitor({ eventCount, status }) {
+export default function KeyboardMonitor({ eventCount, status, blocked }) {
   return (
-    <div className="flex items-center justify-between rounded-lg border border-slate-700/80 bg-slate-950/50 px-3 py-2">
+    <div className="flex items-center justify-between border border-hairline bg-surface px-3 py-2">
       <div>
-        <p className="text-sm font-medium text-slate-200">Keyboard Behavior</p>
-        <p className="font-mono text-[11px] text-slate-500">
-          {eventCount} timings (no key values stored)
+        <p className="font-mono text-[10px] uppercase tracking-wider text-parchment">KEYBOARD BEHAVIOR</p>
+        <p className="font-mono text-[10px] text-outline">
+          {eventCount} timings
         </p>
       </div>
-      <span className="flex items-center gap-2 text-xs text-cyan-300">
-        <span className="h-2 w-2 rounded-full bg-cyan-400 shadow-[0_0_10px_#22d3ee]" />
-        {status}
+      <span className="flex items-center gap-2">
+        <span className={blocked ? "h-2 w-2 bg-brick" : "h-2 w-2 bg-moss"} />
+        <span className={blocked ? "font-mono text-[10px] uppercase tracking-wider text-brick" : "font-mono text-[10px] uppercase tracking-wider text-moss"}>{status}</span>
       </span>
     </div>
   );

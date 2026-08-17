@@ -1,75 +1,106 @@
-import RiskScore from "./RiskScore.jsx";
+import MouseMonitor from "./MouseMonitor.jsx";
+import KeyboardMonitor from "./KeyboardMonitor.jsx";
 
-function Row({ label, value }) {
-  return (
-    <div className="flex items-center justify-between gap-4 py-1 text-sm">
-      <span className="text-slate-400">{label}</span>
-      <span className="font-mono text-slate-100">{value}</span>
-    </div>
-  );
-}
-
-function formatScore(value) {
-  if (typeof value !== "number") return "—";
-  return value.toFixed(2);
-}
-
-export default function AnalysisResult({ result }) {
-  if (!result) return null;
-
-  const { analysis, riskScore, decision, weights } = result;
-  const honeypotTriggered = analysis.honeypot.triggered;
-
-  return (
-    <section className="rounded-2xl border border-slate-700/80 bg-slate-900/70 p-5">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-300">
-          AegisGuard Analysis
-        </h2>
-        <p className="font-mono text-[11px] text-slate-500">
-          weights {Math.round(weights.mouse * 100)} / {Math.round(weights.keyboard * 100)} /{" "}
-          {Math.round(weights.honeypot * 100)}
-        </p>
-      </div>
-
-      <div className="grid gap-4 md:grid-cols-2">
-        <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-          <h3 className="mb-2 text-sm font-semibold text-slate-200">Mouse Behavior</h3>
-          <Row label="Velocity" value={`${formatScore(analysis.mouse.velocity)}  ${analysis.mouse.labels.velocity}`} />
-          <Row label="Acceleration" value={`${formatScore(analysis.mouse.acceleration)}  ${analysis.mouse.labels.acceleration}`} />
-          <Row label="Trajectory" value={`${formatScore(analysis.mouse.trajectory)}  ${analysis.mouse.labels.trajectory}`} />
-          <Row label="Jitter" value={`${formatScore(analysis.mouse.jitter)}  ${analysis.mouse.labels.jitter}`} />
-          <Row label="Mouse score" value={formatScore(analysis.mouse.score)} />
+export default function AnalysisResult({ result, session }) {
+  if (!result) {
+    return (
+      <div className="space-y-4">
+        <div className="space-y-2">
+          <MouseMonitor pointCount={session?.mouseCount || 0} status="Monitoring" blocked={false} />
+          <KeyboardMonitor eventCount={session?.keyCount || 0} status="Monitoring" blocked={false} />
         </div>
 
-        <div className="rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-          <h3 className="mb-2 text-sm font-semibold text-slate-200">Keyboard Behavior</h3>
-          <Row label="Typing speed" value={`${analysis.keyboard.labels.typingSpeed}  ${formatScore(analysis.keyboard.typingSpeed)}`} />
-          <Row label="Dwell time" value={`${formatScore(analysis.keyboard.dwell)}  ${analysis.keyboard.labels.dwell}`} />
-          <Row label="Flight time" value={`${formatScore(analysis.keyboard.flight)}  ${analysis.keyboard.labels.flight}`} />
-          <Row label="Variance" value={`${formatScore(analysis.keyboard.variance)}  ${analysis.keyboard.labels.variance}`} />
-          <Row label="Keyboard score" value={formatScore(analysis.keyboard.score)} />
+        <div className="relative h-48 border border-hairline bg-surface">
+          <div className="absolute inset-0 flex items-center justify-center">
+            <p className="font-mono text-[10px] uppercase tracking-wider text-outline">
+              AWAITING TELEMETRY DATA
+            </p>
+          </div>
+          <svg className="h-full w-full opacity-20" preserveAspectRatio="none">
+            {[0, 25, 50, 75, 100].map((y) => (
+              <line key={`h-${y}`} x1="0" y1={`${y}%`} x2="100%" y2={`${y}%`} stroke="var(--color-hairline)" strokeWidth="1" />
+            ))}
+            {[0, 20, 40, 60, 80, 100].map((x) => (
+              <line key={`v-${x}`} x1={`${x}%`} y1="0" x2={`${x}%`} y2="100%" stroke="var(--color-hairline)" strokeWidth="1" />
+            ))}
+          </svg>
         </div>
       </div>
+    );
+  }
 
-      <div className="mt-4 rounded-xl border border-slate-800 bg-slate-950/60 p-4">
-        <h3 className="mb-2 text-sm font-semibold text-slate-200">Honeypot</h3>
-        <Row
-          label="Status"
-          value={honeypotTriggered ? "TRIGGERED" : "NOT TRIGGERED"}
+  const { analysis, decision } = result;
+  const blocked = decision === "BLOCK";
+  const graphColor = blocked ? "#A24A3A" : "#5C7A52";
+
+  return (
+    <div className="space-y-4">
+      <div className="space-y-2">
+        <MouseMonitor 
+          pointCount={session?.mouseCount || 0} 
+          status={blocked ? "SUSPICIOUS" : "NORMAL"} 
+          blocked={blocked}
         />
-        <Row label="Honeypot score" value={analysis.honeypot.score} />
+        <KeyboardMonitor 
+          eventCount={session?.keyCount || 0} 
+          status={blocked ? "ANOMALY" : "NORMAL"}
+          blocked={blocked}
+        />
       </div>
 
-      <div className="mt-4">
-        <RiskScore riskScore={riskScore} decision={decision} />
-      </div>
+      <div className="relative h-56 border border-hairline bg-surface">
+        <svg className="h-full w-full" preserveAspectRatio="none" viewBox="0 0 400 200">
+          <g opacity="0.2">
+            {[0, 50, 100, 150, 200].map((y) => (
+              <line key={`h-${y}`} x1="0" y1={y} x2="400" y2={y} stroke="var(--color-hairline)" strokeWidth="1" />
+            ))}
+            {[0, 80, 160, 240, 320, 400].map((x) => (
+              <line key={`v-${x}`} x1={x} y1="0" x2={x} y2="200" stroke="var(--color-hairline)" strokeWidth="1" />
+            ))}
+          </g>
 
-      <p className="mt-4 text-center text-xs text-slate-500">
-        {decision === "ALLOW"
-          ? "Request forwarded to Protected Service"
-          : "Request rejected by AegisGuard middleware"}
-      </p>
-    </section>
+          <path
+            d={blocked ? 
+              "M0,100 L50,100 L100,102 L150,98 L200,100 L250,102 L300,98 L350,100 L400,100" :
+              "M0,120 L40,95 L80,110 L120,85 L160,105 L200,80 L240,100 L280,75 L320,95 L360,70 L400,90"
+            }
+            fill="none"
+            stroke={graphColor}
+            strokeWidth="2.5"
+          />
+
+          {blocked ? (
+            [50, 100, 150, 200, 250, 300, 350].map((x) => (
+              <line key={x} x1={x} y1="160" x2={x} y2="180" stroke={graphColor} strokeWidth="2" />
+            ))
+          ) : (
+            [40, 80, 120, 160, 200, 240, 280, 320, 360].map((x, i) => {
+              const heights = [15, 25, 18, 30, 20, 22, 28, 19, 26];
+              return <line key={x} x1={x} y1={180 - heights[i]} x2={x} y2="180" stroke={graphColor} strokeWidth="2" />;
+            })
+          )}
+
+          {(blocked ? 
+            [50, 100, 150, 200, 250, 300, 350] : 
+            [40, 80, 120, 160, 200, 240, 280, 320, 360]
+          ).map((x, i) => {
+            const yValues = blocked ? 
+              [100, 102, 98, 100, 102, 98, 100] :
+              [95, 110, 85, 105, 80, 100, 75, 95, 70];
+            return <circle key={x} cx={x} cy={yValues[i]} r="3" fill={graphColor} />;
+          })}
+        </svg>
+
+        <div className="absolute bottom-2 left-2 font-mono text-[9px] text-outline">
+          <p>X-102.3</p>
+        </div>
+        <div className="absolute bottom-2 right-2 font-mono text-[9px] text-outline">
+          <p>FREQUENCY // FRAMES</p>
+        </div>
+        <div className="absolute left-2 top-2 font-mono text-[9px] text-outline">
+          <p>Y: VELOCITY / PHASE</p>
+        </div>
+      </div>
+    </div>
   );
 }

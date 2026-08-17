@@ -3,6 +3,7 @@
   "private": true,
   "description": "AegisGuard anti-bot middleware prototype (MERN)",
   "scripts": {
+    "dev": "npm run dev --prefix client",
     "test:pipeline": "node server/test/pipeline.test.js",
     "install:all": "npm install --prefix server && npm install --prefix client",
     "dev:server": "npm run dev --prefix server",

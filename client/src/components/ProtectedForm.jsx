@@ -10,10 +10,10 @@ export default function ProtectedForm({
   submitting,
 }) {
   return (
-    <form onSubmit={onSubmit} className="space-y-4" autoComplete="off">
+    <form onSubmit={onSubmit} className="space-y-3" autoComplete="off">
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">
-          Name
+        <label className="mb-1 block font-mono text-[10px] font-semibold uppercase tracking-wider text-parchment">
+          Full Name
         </label>
         <input
           name="name"
@@ -21,13 +21,13 @@ export default function ProtectedForm({
           onChange={onChange}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-slate-100 outline-none ring-cyan-400/40 focus:ring"
-          placeholder="Applicant name"
+          className="w-full border border-hairline bg-surface-lowest px-3 py-2 font-sans text-[13px] leading-[18px] text-parchment transition-colors focus:border-brass focus:outline-none"
+          placeholder="J. Doe Simulation"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">
+        <label className="mb-1 block font-mono text-[10px] font-semibold uppercase tracking-wider text-parchment">
           Email
         </label>
         <input
@@ -36,25 +36,25 @@ export default function ProtectedForm({
           onChange={onChange}
           onKeyDown={onKeyDown}
           onKeyUp={onKeyUp}
-          className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-slate-100 outline-none ring-cyan-400/40 focus:ring"
-          placeholder="name@example.gov"
+          className="w-full border border-hairline bg-surface-lowest px-3 py-2 font-sans text-[13px] leading-[18px] text-parchment transition-colors focus:border-brass focus:outline-none"
+          placeholder="bot_instance_77@proxy.net"
         />
       </div>
 
       <div>
-        <label className="mb-1 block text-xs uppercase tracking-wider text-slate-400">
-          Service
+        <label className="mb-1 block font-mono text-[10px] font-semibold uppercase tracking-wider text-parchment">
+          Service Requested
         </label>
         <select
           name="service"
           value={form.service}
           onChange={onChange}
-          className="w-full rounded-lg border border-slate-700 bg-slate-950/70 px-3 py-2 text-slate-100 outline-none ring-cyan-400/40 focus:ring"
+          className="w-full border border-hairline bg-surface-lowest px-3 py-2 font-sans text-[13px] leading-[18px] text-parchment transition-colors focus:border-brass focus:outline-none"
         >
-          <option value="">Select service</option>
-          <option value="certificate">Certificate request</option>
-          <option value="status">Application status</option>
-          <option value="records">Public records lookup</option>
+          <option value="">—</option>
+          <option value="certificate">E-CERTIFICATE ISSUANCE (STANDARD)</option>
+          <option value="status">APPLICATION STATUS CHECK</option>
+          <option value="records">PUBLIC RECORDS REQUEST</option>
         </select>
       </div>
 
@@ -73,13 +73,15 @@ export default function ProtectedForm({
         </div>
       ) : null}
 
-      <button
-        type="submit"
-        disabled={submitting}
-        className="w-full rounded-lg bg-cyan-400 px-4 py-2.5 text-sm font-semibold text-slate-950 transition hover:bg-cyan-300 disabled:cursor-not-allowed disabled:opacity-60"
-      >
-        {submitting ? "Analyzing interaction..." : "Continue Request"}
-      </button>
+      <div className="pt-2">
+        <button
+          type="submit"
+          disabled={submitting}
+          className="w-full border border-brass bg-brass px-4 py-3 font-mono text-[10px] font-semibold uppercase tracking-wider text-surface transition-colors hover:bg-brass-primary disabled:cursor-not-allowed disabled:opacity-60"
+        >
+          {submitting ? "ANALYZING..." : "SUBMIT REQUEST"}
+        </button>
+      </div>
     </form>
   );
 }

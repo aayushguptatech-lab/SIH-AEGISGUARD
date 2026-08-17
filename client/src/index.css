@@ -1,18 +1,75 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:wght@400;500;600&family=Public+Sans:wght@400;500;600&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-:root {
+/* Dark Theme (Default) */
+:root,
+[data-theme="dark"] {
   color-scheme: dark;
+  
+  /* Surface colors */
+  --color-surface: #141311;
+  --color-surface-dim: #141311;
+  --color-surface-bright: #3b3936;
+  --color-surface-lowest: #0f0e0c;
+  --color-surface-low: #1c1b19;
+  --color-surface-container: #211f1d;
+  --color-surface-high: #2b2a27;
+  --color-surface-highest: #363432;
+  
+  /* Text colors */
+  --color-parchment: #e6e2de;
+  --color-parchment-variant: #d3c4b3;
+  --color-outline: #9c8f7f;
+  --color-outline-variant: #4f4538;
+  
+  /* Accent colors */
+  --color-brass: #B98A3E;
+  --color-brass-primary: #f3be6c;
+  --color-moss: #5C7A52;
+  --color-brick: #A24A3A;
+  --color-hairline: #7A7568;
+}
+
+/* Light Theme */
+[data-theme="light"] {
+  color-scheme: light;
+  
+  /* Surface colors - inverted for light */
+  --color-surface: #f5f3f0;
+  --color-surface-dim: #ebe9e6;
+  --color-surface-bright: #ffffff;
+  --color-surface-lowest: #ffffff;
+  --color-surface-low: #edeae7;
+  --color-surface-container: #e6e3df;
+  --color-surface-high: #d9d6d2;
+  --color-surface-highest: #ccc9c5;
+  
+  /* Text colors - inverted */
+  --color-parchment: #1a1816;
+  --color-parchment-variant: #2c2a26;
+  --color-outline: #635e52;
+  --color-outline-variant: #b0a898;
+  
+  /* Accent colors - adjusted for light bg */
+  --color-brass: #8a6a2e;
+  --color-brass-primary: #B98A3E;
+  --color-moss: #4a5f42;
+  --color-brick: #8a3a2a;
+  --color-hairline: #b8b0a0;
 }
 
 body {
   margin: 0;
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top, rgba(56, 189, 248, 0.08), transparent 28%),
-    #071018;
-  color: #d7e6ef;
+  background: var(--color-surface);
+  color: var(--color-parchment);
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 input,
@@ -29,4 +86,73 @@ button {
   height: 1px;
   overflow: hidden;
   opacity: 0;
+}
+
+/* Industrial Utilitarian Styling - Zero Depth */
+* {
+  box-sizing: border-box;
+}
+
+/* Remove default focus rings, use border transitions */
+input:focus,
+select:focus,
+button:focus {
+  outline: none;
+}
+
+/* Hairline borders */
+input,
+select {
+  transition: border-color 0.15s ease;
+}
+
+/* Flat button states - no shadow, just border changes */
+button {
+  transition: all 0.15s ease;
+}
+
+button:hover {
+  transform: none; /* No lift effect */
+}
+
+/* Zero border radius for sharp corners */
+input,
+select,
+button {
+  border-radius: 0;
+}
+
+/* Typography hierarchy */
+.font-display {
+  font-family: "Bebas Neue", Impact, sans-serif;
+  text-transform: uppercase;
+}
+
+.font-mono {
+  font-family: "IBM Plex Mono", "Courier New", monospace;
+}
+
+.font-sans {
+  font-family: "Public Sans", -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+/* Custom scrollbar for industrial look */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-surface);
+  border-left: 1px solid var(--color-hairline);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-hairline);
+  border: 1px solid var(--color-hairline);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brass);
+  border-color: var(--color-brass);
 }

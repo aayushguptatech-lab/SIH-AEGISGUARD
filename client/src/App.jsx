@@ -1,98 +1,113 @@
 import ProtectedForm from "./components/ProtectedForm.jsx";
-import MouseMonitor from "./components/MouseMonitor.jsx";
-import KeyboardMonitor from "./components/KeyboardMonitor.jsx";
 import AnalysisResult from "./components/AnalysisResult.jsx";
+import RiskScore from "./components/RiskScore.jsx";
+import Sidebar from "./components/Sidebar.jsx";
+import ThemeToggle from "./components/ThemeToggle.jsx";
 import { useAegisSession } from "./hooks/useAegisSession.js";
+import { useTheme } from "./hooks/useTheme.js";
 
 export default function App() {
   const session = useAegisSession();
+  const { theme, toggleTheme } = useTheme();
 
   return (
-    <div className="mx-auto min-h-screen max-w-6xl px-4 py-8">
-      <header className="mb-6 text-center">
-        <p className="text-xs uppercase tracking-[0.35em] text-cyan-300">Middleware layer</p>
-        <h1 className="mt-2 text-4xl font-semibold tracking-wide text-white">AEGISGUARD</h1>
-        <p className="mt-1 text-slate-400">Anti-Bot Security Gateway</p>
+    <div className="flex h-screen flex-col overflow-hidden bg-surface text-parchment">
+      <header className="grid h-[38px] shrink-0 grid-cols-[142px_minmax(0,1fr)_auto] border-b border-hairline bg-surface-low">
+        <div className="flex items-center border-r border-hairline px-4">
+          <h1 className="font-display text-[27px] leading-none tracking-display text-brass-primary">
+            AEGISGUARD
+          </h1>
+        </div>
+
+        <div className="flex min-w-0 items-center px-4">
+          <p className="truncate font-mono text-[8px] uppercase tracking-[0.22em] text-outline">
+            SITS BETWEEN THE REQUEST AND THE SERVICE. READS BEHAVIOR, NOT IDENTITY.
+          </p>
+        </div>
+
+        <div className="flex items-center gap-3 border-l border-hairline px-4 font-mono text-[8px] uppercase tracking-wider text-outline">
+          <span>INCOMING REQUEST</span>
+          <span className="text-brass-primary">→</span>
+          <span className="border border-hairline px-2 py-1 text-parchment">
+            AEGISGUARD CHECKPOINT
+          </span>
+          <span className="text-brass-primary">→</span>
+          <span>E-CERTIFICATE SERVICE</span>
+          <ThemeToggle theme={theme} onToggle={toggleTheme} />
+          <span className="text-brass-primary">⬢</span>
+          <span className="text-brass-primary">◼</span>
+          <span className="text-brick">✖</span>
+        </div>
       </header>
 
-      <div className="mb-6 grid grid-cols-[1fr_auto_1fr] items-center gap-3 rounded-xl border border-slate-800 bg-slate-950/60 px-4 py-3 text-center text-xs uppercase tracking-wider text-slate-400">
-        <span>User / Bot</span>
-        <span className="rounded-full border border-cyan-400/40 px-3 py-1 text-cyan-300">
-          AegisGuard
-        </span>
-        <span>Protected Service</span>
-      </div>
+      <div className="flex min-h-0 flex-1">
+        <Sidebar onInitiateScan={session.resetTelemetry} />
 
-      <div className="grid gap-6 lg:grid-cols-[1.05fr_0.95fr]">
-        <section className="rounded-2xl border border-slate-700/80 bg-slate-900/70 p-5">
-          <div className="mb-4">
-            <h2 className="text-sm font-semibold uppercase tracking-[0.2em] text-slate-300">
-              Protected Service Request
-            </h2>
-            <p className="mt-1 text-xs text-slate-500">
-              Simulated public-service form. AegisGuard inspects behavior before forwarding.
-            </p>
-          </div>
-
-          <ProtectedForm
-            form={session.form}
-            onChange={(event) =>
-              session.setForm((prev) => ({
-                ...prev,
-                [event.target.name]: event.target.value,
-              }))
-            }
-            honeypotFieldName={session.honeypotFieldName}
-            honeypotValue={session.honeypotValue}
-            onHoneypotChange={(event) => session.setHoneypotValue(event.target.value)}
-            onKeyDown={session.handleKeyDown}
-            onKeyUp={session.handleKeyUp}
-            onSubmit={session.submitHuman}
-            submitting={session.submitting}
-          />
-
-          <div className="mt-4 grid gap-2 sm:grid-cols-2">
-            <button
-              type="button"
-              onClick={session.resetTelemetry}
-              className="rounded-lg border border-slate-600 px-3 py-2 text-sm text-slate-200 hover:border-slate-400"
-            >
-              Normal Interaction
-            </button>
-            <button
-              type="button"
-              onClick={session.simulateBot}
-              className="rounded-lg border border-rose-400/50 px-3 py-2 text-sm text-rose-200 hover:bg-rose-500/10"
-            >
-              Simulate Bot
-            </button>
-          </div>
-        </section>
-
-        <aside className="space-y-4">
-          <section className="rounded-2xl border border-slate-700/80 bg-slate-900/70 p-5">
-            <p className="mb-3 text-sm text-slate-300">
-              AegisGuard is analyzing this interaction...
-            </p>
-            <div className="space-y-2">
-              <MouseMonitor pointCount={session.mouseCount} status="Monitoring" />
-              <KeyboardMonitor eventCount={session.keyCount} status="Monitoring" />
-              <div className="flex items-center justify-between rounded-lg border border-slate-700/80 bg-slate-950/50 px-3 py-2">
-                <p className="text-sm font-medium text-slate-200">Honeypot</p>
-                <span className="flex items-center gap-2 text-xs text-emerald-300">
-                  <span className="h-2 w-2 rounded-full bg-emerald-400" />
-                  Protected
+        <main className="flex min-w-0 flex-1">
+          <section className="flex min-w-0 flex-1 flex-col bg-surface">
+            <div className="flex min-h-0 flex-1 flex-col px-7 py-6">
+              <div className="mb-5 flex items-center justify-between">
+                <h2 className="font-mono text-[10px] font-semibold uppercase tracking-wider text-parchment">
+                  REQUEST INTAKE
+                </h2>
+                <span className="font-mono text-[9px] uppercase tracking-wider text-outline">
+                  SEC_ZONE_A
                 </span>
               </div>
-            </div>
-          </section>
-          <AnalysisResult result={session.result} />
-        </aside>
-      </div>
 
-      {session.error ? (
-        <p className="mt-4 text-center text-sm text-rose-300">{session.error}</p>
-      ) : null}
+              <div className="min-h-0 flex-1">
+                <ProtectedForm
+                  form={session.form}
+                  onChange={(event) =>
+                    session.setForm((prev) => ({
+                      ...prev,
+                      [event.target.name]: event.target.value,
+                    }))
+                  }
+                  honeypotFieldName={session.honeypotFieldName}
+                  honeypotValue={session.honeypotValue}
+                  onHoneypotChange={(event) => session.setHoneypotValue(event.target.value)}
+                  onKeyDown={session.handleKeyDown}
+                  onKeyUp={session.handleKeyUp}
+                  onSubmit={session.submitHuman}
+                  submitting={session.submitting}
+                />
+              </div>
+            </div>
+
+            {session.error ? (
+              <div className="border-t border-brick bg-surface-lowest px-7 py-2 font-mono text-[9px] uppercase tracking-wider text-brick">
+                ERROR: {session.error}
+              </div>
+            ) : null}
+
+            <footer className="border-t border-dashed border-hairline bg-surface px-7 py-3">
+              <div className="flex items-center gap-3">
+                <span className="font-mono text-[9px] uppercase tracking-wider text-outline">
+                  DEMO CONTROLS:
+                </span>
+                <button
+                  type="button"
+                  onClick={session.resetTelemetry}
+                  className="border border-hairline bg-surface-lowest px-7 py-2 font-mono text-[9px] font-semibold uppercase tracking-wider text-parchment hover:border-brass hover:text-brass"
+                >
+                  RUN NORMAL INTERACTION
+                </button>
+                <button
+                  type="button"
+                  onClick={session.simulateBot}
+                  className="border border-brick bg-surface-lowest px-7 py-2 font-mono text-[9px] font-semibold uppercase tracking-wider text-brick hover:bg-brick/10"
+                >
+                  RUN BOT SIMULATION
+                </button>
+              </div>
+            </footer>
+          </section>
+
+          <AnalysisResult result={session.result} session={session} />
+          <RiskScore result={session.result} session={session} />
+        </main>
+      </div>
     </div>
   );
 }
